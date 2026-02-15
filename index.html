@@ -422,69 +422,100 @@
     </div>
     
     <!-- Settings Modal -->
-    <div id="settingsModal" class="modal fixed inset-0 hidden items-center justify-center z-50">
-        <div class="modal-content rounded-lg p-6 w-full max-w-md mx-4 shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">Settings</h3>
-                <button id="closeSettings" class="text-2xl" style="color: var(--text-secondary);">
-                    <i class="fas fa-times"></i>
-                </button>
+<div id="settingsModal" class="modal fixed inset-0 hidden items-center justify-center z-50">
+    <div class="modal-content rounded-lg p-6 w-full max-w-md mx-4 shadow-2xl">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-2xl font-bold">Settings</h3>
+            <button id="closeSettings" class="text-2xl" style="color: var(--text-secondary);">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block mb-2 font-semibold">OpenRouter API Key</label>
+                <input 
+                    type="password" 
+                    id="apiKeyInput" 
+                    class="w-full p-3 rounded-lg"
+                    placeholder="sk-or-v1-..."
+                >
+                <a href="https://openrouter.ai/keys" target="_blank" class="text-xs text-blue-500 hover:underline mt-1 block">Get your API key</a>
             </div>
             
-            <div class="space-y-4">
-                <div>
-                    <label class="block mb-2 font-semibold">OpenRouter API Key</label>
-                    <input 
-                        type="password" 
-                        id="apiKeyInput" 
-                        class="w-full p-3 rounded-lg"
-                        placeholder="sk-or-v1-..."
-                    >
-                    <a href="https://openrouter.ai/keys" target="_blank" class="text-xs text-blue-500 hover:underline mt-1 block">Get your API key</a>
+            <div>
+                <label class="block mb-2 font-semibold">Model Selection</label>
+                
+                <!-- Toggle between preset and custom -->
+                <div class="flex space-x-2 mb-2">
+                    <button id="presetModelBtn" class="flex-1 py-2 px-4 rounded-lg font-semibold transition-all" style="background-color: var(--bg-tertiary);">
+                        Preset Models
+                    </button>
+                    <button id="customModelBtn" class="flex-1 py-2 px-4 rounded-lg font-semibold transition-all" style="background-color: var(--bg-secondary);">
+                        Custom Model
+                    </button>
                 </div>
                 
-                <div>
-                    <label class="block mb-2 font-semibold">Model</label>
+                <!-- Preset Models Dropdown -->
+                <div id="presetModelSection">
                     <select id="modelSelect" class="w-full p-3 rounded-lg">
                         <option value="deepseek/deepseek-r1:free">DeepSeek R1 (Free)</option>
                         <option value="google/gemini-pro-1.5">Google Gemini Pro 1.5</option>
                         <option value="anthropic/claude-3-opus">Claude 3 Opus</option>
+                        <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
                         <option value="openai/gpt-4-turbo">GPT-4 Turbo</option>
+                        <option value="openai/gpt-4o">GPT-4o</option>
                         <option value="meta-llama/llama-3-70b-instruct">Llama 3 70B</option>
+                        <option value="mistralai/mixtral-8x7b-instruct">Mixtral 8x7B</option>
+                        <option value="google/gemini-flash-1.5">Gemini Flash 1.5</option>
                     </select>
                 </div>
                 
-                <div>
-                    <label class="block mb-2 font-semibold">System Prompt</label>
-                    <textarea 
-                        id="systemPromptInput" 
+                <!-- Custom Model Input -->
+                <div id="customModelSection" style="display: none;">
+                    <input 
+                        type="text" 
+                        id="customModelInput" 
                         class="w-full p-3 rounded-lg"
-                        rows="4"
-                        placeholder="You are a helpful AI assistant..."
-                        style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
-                    ></textarea>
+                        placeholder="e.g., openai/gpt-4o-mini"
+                    >
+                    <a href="https://openrouter.ai/models" target="_blank" class="text-xs text-blue-500 hover:underline mt-1 block">
+                        Browse available models
+                    </a>
                 </div>
-                
-                <div>
-                    <label class="flex items-center cursor-pointer">
-                        <input type="checkbox" id="streamingToggle" class="mr-2">
-                        <span>Enable Streaming Responses</span>
-                    </label>
-                </div>
-                
-                <div>
-                    <label class="flex items-center cursor-pointer">
-                        <input type="checkbox" id="typingAnimToggle" class="mr-2">
-                        <span>Enable Typing Animation</span>
-                    </label>
-                </div>
-                
-                <button id="saveSettings" class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg">
-                    Save Settings
-                </button>
             </div>
+            
+            <div>
+                <label class="block mb-2 font-semibold">System Prompt</label>
+                <textarea 
+                    id="systemPromptInput" 
+                    class="w-full p-3 rounded-lg"
+                    rows="4"
+                    placeholder="You are a helpful AI assistant..."
+                    style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+                ></textarea>
+            </div>
+            
+            <div>
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="streamingToggle" class="mr-2">
+                    <span>Enable Streaming Responses</span>
+                </label>
+            </div>
+            
+            <div>
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="typingAnimToggle" class="mr-2">
+                    <span>Enable Typing Animation</span>
+                </label>
+            </div>
+            
+            <button id="saveSettings" class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg">
+                Save Settings
+            </button>
         </div>
     </div>
+</div>
     
     <!-- Rename Chat Modal -->
     <div id="renameModal" class="modal fixed inset-0 hidden items-center justify-center z-50">
@@ -1281,3 +1312,4 @@
 
 </body>
 </html>
+
