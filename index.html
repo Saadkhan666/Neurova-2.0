@@ -168,15 +168,17 @@
             background-color: var(--bg-primary);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
-        input[type="text"], input[type="password"], select {
+        input[type="text"], input[type="password"], select, textarea {
             background-color: var(--bg-secondary);
             color: var(--text-primary);
             border: 1px solid var(--border-color);
         }
         
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -250,6 +252,15 @@
             cursor: pointer;
             font-size: 14px;
             margin: 4px;
+        }
+        
+        .model-toggle-btn {
+            transition: all 0.3s;
+        }
+        
+        .model-toggle-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
         
         @media (max-width: 768px) {
@@ -422,100 +433,105 @@
     </div>
     
     <!-- Settings Modal -->
-<div id="settingsModal" class="modal fixed inset-0 hidden items-center justify-center z-50">
-    <div class="modal-content rounded-lg p-6 w-full max-w-md mx-4 shadow-2xl">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-2xl font-bold">Settings</h3>
-            <button id="closeSettings" class="text-2xl" style="color: var(--text-secondary);">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <div class="space-y-4">
-            <div>
-                <label class="block mb-2 font-semibold">OpenRouter API Key</label>
-                <input 
-                    type="password" 
-                    id="apiKeyInput" 
-                    class="w-full p-3 rounded-lg"
-                    placeholder="sk-or-v1-..."
-                >
-                <a href="https://openrouter.ai/keys" target="_blank" class="text-xs text-blue-500 hover:underline mt-1 block">Get your API key</a>
+    <div id="settingsModal" class="modal fixed inset-0 hidden items-center justify-center z-50">
+        <div class="modal-content rounded-lg p-6 w-full max-w-md mx-4 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">Settings</h3>
+                <button id="closeSettings" class="text-2xl" style="color: var(--text-secondary);">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             
-            <div>
-                <label class="block mb-2 font-semibold">Model Selection</label>
-                
-                <!-- Toggle between preset and custom -->
-                <div class="flex space-x-2 mb-2">
-                    <button id="presetModelBtn" class="flex-1 py-2 px-4 rounded-lg font-semibold transition-all" style="background-color: var(--bg-tertiary);">
-                        Preset Models
-                    </button>
-                    <button id="customModelBtn" class="flex-1 py-2 px-4 rounded-lg font-semibold transition-all" style="background-color: var(--bg-secondary);">
-                        Custom Model
-                    </button>
-                </div>
-                
-                <!-- Preset Models Dropdown -->
-                <div id="presetModelSection">
-                    <select id="modelSelect" class="w-full p-3 rounded-lg">
-                        <option value="deepseek/deepseek-r1:free">DeepSeek R1 (Free)</option>
-                        <option value="google/gemini-pro-1.5">Google Gemini Pro 1.5</option>
-                        <option value="anthropic/claude-3-opus">Claude 3 Opus</option>
-                        <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
-                        <option value="openai/gpt-4-turbo">GPT-4 Turbo</option>
-                        <option value="openai/gpt-4o">GPT-4o</option>
-                        <option value="meta-llama/llama-3-70b-instruct">Llama 3 70B</option>
-                        <option value="mistralai/mixtral-8x7b-instruct">Mixtral 8x7B</option>
-                        <option value="google/gemini-flash-1.5">Gemini Flash 1.5</option>
-                    </select>
-                </div>
-                
-                <!-- Custom Model Input -->
-                <div id="customModelSection" style="display: none;">
+            <div class="space-y-4">
+                <div>
+                    <label class="block mb-2 font-semibold">OpenRouter API Key</label>
                     <input 
-                        type="text" 
-                        id="customModelInput" 
+                        type="password" 
+                        id="apiKeyInput" 
                         class="w-full p-3 rounded-lg"
-                        placeholder="e.g., openai/gpt-4o-mini"
+                        placeholder="sk-or-v1-..."
                     >
-                    <a href="https://openrouter.ai/models" target="_blank" class="text-xs text-blue-500 hover:underline mt-1 block">
-                        Browse available models
-                    </a>
+                    <a href="https://openrouter.ai/keys" target="_blank" class="text-xs text-blue-500 hover:underline mt-1 block">Get your API key</a>
                 </div>
+                
+                <div>
+                    <label class="block mb-2 font-semibold">Model Selection</label>
+                    
+                    <!-- Toggle between preset and custom -->
+                    <div class="flex space-x-2 mb-3">
+                        <button id="presetModelBtn" class="model-toggle-btn flex-1 py-2 px-4 rounded-lg font-semibold" style="background-color: var(--bg-tertiary);">
+                            <i class="fas fa-list mr-1"></i> Preset
+                        </button>
+                        <button id="customModelBtn" class="model-toggle-btn flex-1 py-2 px-4 rounded-lg font-semibold" style="background-color: var(--bg-secondary);">
+                            <i class="fas fa-edit mr-1"></i> Custom
+                        </button>
+                    </div>
+                    
+                    <!-- Preset Models Dropdown -->
+                    <div id="presetModelSection">
+                        <select id="modelSelect" class="w-full p-3 rounded-lg">
+                            <option value="deepseek/deepseek-r1:free">🆓 DeepSeek R1 (Free)</option>
+                            <option value="google/gemini-pro-1.5">Google Gemini Pro 1.5</option>
+                            <option value="google/gemini-flash-1.5">⚡ Gemini Flash 1.5</option>
+                            <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+                            <option value="anthropic/claude-3-opus">Claude 3 Opus</option>
+                            <option value="anthropic/claude-3-haiku">⚡ Claude 3 Haiku</option>
+                            <option value="openai/gpt-4o">GPT-4o</option>
+                            <option value="openai/gpt-4o-mini">⚡ GPT-4o Mini</option>
+                            <option value="openai/gpt-4-turbo">GPT-4 Turbo</option>
+                            <option value="meta-llama/llama-3.1-70b-instruct">Llama 3.1 70B</option>
+                            <option value="meta-llama/llama-3.1-8b-instruct">⚡ Llama 3.1 8B</option>
+                            <option value="mistralai/mixtral-8x7b-instruct">Mixtral 8x7B</option>
+                        </select>
+                        <p class="text-xs mt-2" style="color: var(--text-secondary);">⚡ = Faster & Cheaper</p>
+                    </div>
+                    
+                    <!-- Custom Model Input -->
+                    <div id="customModelSection" style="display: none;">
+                        <input 
+                            type="text" 
+                            id="customModelInput" 
+                            class="w-full p-3 rounded-lg mb-2"
+                            placeholder="e.g., openai/gpt-4o-mini"
+                        >
+                        <a href="https://openrouter.ai/models" target="_blank" class="text-xs text-blue-500 hover:underline block">
+                            <i class="fas fa-external-link-alt mr-1"></i> Browse all available models
+                        </a>
+                        <p class="text-xs mt-2" style="color: var(--text-secondary);">
+                            Format: <code>provider/model-name</code>
+                        </p>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block mb-2 font-semibold">System Prompt</label>
+                    <textarea 
+                        id="systemPromptInput" 
+                        class="w-full p-3 rounded-lg"
+                        rows="4"
+                        placeholder="You are a helpful AI assistant..."
+                        style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+                    ></textarea>
+                </div>
+                
+                <div class="space-y-2">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="streamingToggle" class="mr-2">
+                        <span>Enable Streaming Responses</span>
+                    </label>
+                    
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="typingAnimToggle" class="mr-2">
+                        <span>Enable Typing Animation</span>
+                    </label>
+                </div>
+                
+                <button id="saveSettings" class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg">
+                    <i class="fas fa-save mr-2"></i> Save Settings
+                </button>
             </div>
-            
-            <div>
-                <label class="block mb-2 font-semibold">System Prompt</label>
-                <textarea 
-                    id="systemPromptInput" 
-                    class="w-full p-3 rounded-lg"
-                    rows="4"
-                    placeholder="You are a helpful AI assistant..."
-                    style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
-                ></textarea>
-            </div>
-            
-            <div>
-                <label class="flex items-center cursor-pointer">
-                    <input type="checkbox" id="streamingToggle" class="mr-2">
-                    <span>Enable Streaming Responses</span>
-                </label>
-            </div>
-            
-            <div>
-                <label class="flex items-center cursor-pointer">
-                    <input type="checkbox" id="typingAnimToggle" class="mr-2">
-                    <span>Enable Typing Animation</span>
-                </label>
-            </div>
-            
-            <button id="saveSettings" class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg">
-                Save Settings
-            </button>
         </div>
     </div>
-</div>
     
     <!-- Rename Chat Modal -->
     <div id="renameModal" class="modal fixed inset-0 hidden items-center justify-center z-50">
@@ -552,6 +568,8 @@
             currentChatId: null,
             apiKey: '',
             model: 'deepseek/deepseek-r1:free',
+            customModel: '',
+            useCustomModel: false,
             systemPrompt: 'You are Neurova AI, an advanced universal AI assistant with exceptional capabilities in reasoning, creativity, and problem-solving. You provide accurate, helpful, and thoughtful responses.',
             darkMode: false,
             streaming: true,
@@ -592,6 +610,8 @@
                     APP_STATE.chats = data.chats || [];
                     APP_STATE.apiKey = data.apiKey || '';
                     APP_STATE.model = data.model || 'deepseek/deepseek-r1:free';
+                    APP_STATE.customModel = data.customModel || '';
+                    APP_STATE.useCustomModel = data.useCustomModel || false;
                     APP_STATE.systemPrompt = data.systemPrompt || APP_STATE.systemPrompt;
                     APP_STATE.darkMode = data.darkMode || false;
                     APP_STATE.streaming = data.streaming !== undefined ? data.streaming : true;
@@ -604,9 +624,17 @@
             // Update settings UI
             document.getElementById('apiKeyInput').value = APP_STATE.apiKey;
             document.getElementById('modelSelect').value = APP_STATE.model;
+            document.getElementById('customModelInput').value = APP_STATE.customModel;
             document.getElementById('systemPromptInput').value = APP_STATE.systemPrompt;
             document.getElementById('streamingToggle').checked = APP_STATE.streaming;
             document.getElementById('typingAnimToggle').checked = APP_STATE.typingAnimation;
+            
+            // Set initial model view
+            if (APP_STATE.useCustomModel) {
+                showCustomModelInput();
+            } else {
+                showPresetModelInput();
+            }
         }
         
         function saveToLocalStorage() {
@@ -614,12 +642,49 @@
                 chats: APP_STATE.chats,
                 apiKey: APP_STATE.apiKey,
                 model: APP_STATE.model,
+                customModel: APP_STATE.customModel,
+                useCustomModel: APP_STATE.useCustomModel,
                 systemPrompt: APP_STATE.systemPrompt,
                 darkMode: APP_STATE.darkMode,
                 streaming: APP_STATE.streaming,
                 typingAnimation: APP_STATE.typingAnimation
             };
             localStorage.setItem('neurovaAI', JSON.stringify(data));
+        }
+        
+        // =============================
+        // MODEL SELECTION FUNCTIONS
+        // =============================
+        
+        function showPresetModelInput() {
+            APP_STATE.useCustomModel = false;
+            document.getElementById('presetModelSection').style.display = 'block';
+            document.getElementById('customModelSection').style.display = 'none';
+            
+            // Update button styles
+            const presetBtn = document.getElementById('presetModelBtn');
+            const customBtn = document.getElementById('customModelBtn');
+            presetBtn.classList.add('active');
+            customBtn.classList.remove('active');
+        }
+        
+        function showCustomModelInput() {
+            APP_STATE.useCustomModel = true;
+            document.getElementById('presetModelSection').style.display = 'none';
+            document.getElementById('customModelSection').style.display = 'block';
+            
+            // Update button styles
+            const presetBtn = document.getElementById('presetModelBtn');
+            const customBtn = document.getElementById('customModelBtn');
+            presetBtn.classList.remove('active');
+            customBtn.classList.add('active');
+        }
+        
+        function getActiveModel() {
+            if (APP_STATE.useCustomModel && APP_STATE.customModel.trim()) {
+                return APP_STATE.customModel.trim();
+            }
+            return APP_STATE.model;
         }
         
         // =============================
@@ -634,6 +699,10 @@
             document.getElementById('settingsBtn').addEventListener('click', openSettings);
             document.getElementById('closeSettings').addEventListener('click', closeSettings);
             document.getElementById('saveSettings').addEventListener('click', saveSettings);
+            
+            // Model selection toggle
+            document.getElementById('presetModelBtn').addEventListener('click', showPresetModelInput);
+            document.getElementById('customModelBtn').addEventListener('click', showCustomModelInput);
             
             // Dark Mode Toggle
             document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
@@ -960,6 +1029,17 @@
         }
         
         async function callOpenRouterAPI(messages) {
+            // Validate API key first
+            if (!APP_STATE.apiKey || APP_STATE.apiKey.trim() === '') {
+                throw new Error('Please set your OpenRouter API key in Settings');
+            }
+            
+            if (!APP_STATE.apiKey.startsWith('sk-or-v1-')) {
+                throw new Error('Invalid API key format. OpenRouter keys start with "sk-or-v1-"');
+            }
+            
+            const activeModel = getActiveModel();
+            
             // Prepare messages for API
             const apiMessages = [
                 {
@@ -970,7 +1050,7 @@
             ];
             
             const requestBody = {
-                model: APP_STATE.model,
+                model: activeModel,
                 messages: apiMessages,
                 stream: APP_STATE.streaming
             };
@@ -983,81 +1063,116 @@
         }
         
         async function streamResponse(requestBody) {
-            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${APP_STATE.apiKey}`,
-                    'HTTP-Referer': window.location.href,
-                    'X-Title': 'Neurova AI'
-                },
-                body: JSON.stringify(requestBody)
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error?.message || 'API request failed');
-            }
-            
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let fullResponse = '';
-            
-            // Create AI message container
-            const messagesDiv = document.getElementById('messages');
-            const aiMsgDiv = document.createElement('div');
-            aiMsgDiv.className = 'message ai-message';
-            messagesDiv.appendChild(aiMsgDiv);
-            
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+            try {
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${APP_STATE.apiKey}`,
+                        'HTTP-Referer': window.location.href || 'https://neurova-ai.app',
+                        'X-Title': 'Neurova AI'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
                 
-                const chunk = decoder.decode(value);
-                const lines = chunk.split('\n').filter(line => line.trim() !== '');
+                if (!response.ok) {
+                    const data = await response.json();
+                    
+                    // Better error messages
+                    if (response.status === 401) {
+                        throw new Error('Invalid API key. Please check your OpenRouter API key in Settings.');
+                    } else if (response.status === 404) {
+                        throw new Error('User not found. Please verify your API key at https://openrouter.ai/keys');
+                    } else if (response.status === 429) {
+                        throw new Error('Rate limit exceeded. Please try again later.');
+                    } else if (response.status === 402) {
+                        throw new Error('Insufficient credits. Please add credits to your OpenRouter account.');
+                    }
+                    throw new Error(data.error?.message || `API Error (${response.status}): ${response.statusText}`);
+                }
                 
-                for (const line of lines) {
-                    if (line.startsWith('data: ')) {
-                        const data = line.substring(6);
-                        if (data === '[DONE]') continue;
-                        
-                        try {
-                            const parsed = JSON.parse(data);
-                            const content = parsed.choices?.[0]?.delta?.content;
-                            if (content) {
-                                fullResponse += content;
-                                aiMsgDiv.innerHTML = renderMarkdown(fullResponse);
-                                scrollToBottom();
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let fullResponse = '';
+                
+                // Create AI message container
+                const messagesDiv = document.getElementById('messages');
+                const aiMsgDiv = document.createElement('div');
+                aiMsgDiv.className = 'message ai-message';
+                messagesDiv.appendChild(aiMsgDiv);
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n').filter(line => line.trim() !== '');
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const data = line.substring(6);
+                            if (data === '[DONE]') continue;
+                            
+                            try {
+                                const parsed = JSON.parse(data);
+                                const content = parsed.choices?.[0]?.delta?.content;
+                                if (content) {
+                                    fullResponse += content;
+                                    aiMsgDiv.innerHTML = renderMarkdown(fullResponse);
+                                    scrollToBottom();
+                                }
+                            } catch (e) {
+                                console.error('Parse error:', e);
                             }
-                        } catch (e) {
-                            console.error('Parse error:', e);
                         }
                     }
                 }
+                
+                return fullResponse;
+            } catch (error) {
+                if (error.message) {
+                    throw error;
+                }
+                throw new Error('Network error. Please check your internet connection.');
             }
-            
-            return fullResponse;
         }
         
         async function getNonStreamResponse(requestBody) {
-            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${APP_STATE.apiKey}`,
-                    'HTTP-Referer': window.location.href,
-                    'X-Title': 'Neurova AI'
-                },
-                body: JSON.stringify(requestBody)
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error?.message || 'API request failed');
+            try {
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${APP_STATE.apiKey}`,
+                        'HTTP-Referer': window.location.href || 'https://neurova-ai.app',
+                        'X-Title': 'Neurova AI'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    // Better error messages
+                    if (response.status === 401) {
+                        throw new Error('Invalid API key. Please check your OpenRouter API key in Settings.');
+                    } else if (response.status === 404) {
+                        throw new Error('User not found. Please verify your API key at https://openrouter.ai/keys');
+                    } else if (response.status === 429) {
+                        throw new Error('Rate limit exceeded. Please try again later.');
+                    } else if (response.status === 402) {
+                        throw new Error('Insufficient credits. Please add credits to your OpenRouter account.');
+                    }
+                    throw new Error(data.error?.message || `API Error (${response.status}): ${response.statusText}`);
+                }
+                
+                return data.choices?.[0]?.message?.content || 'No response generated';
+            } catch (error) {
+                if (error.message) {
+                    throw error;
+                }
+                throw new Error('Network error. Please check your internet connection.');
             }
-            
-            const data = await response.json();
-            return data.choices?.[0]?.message?.content || 'No response generated';
         }
         
         async function renderTypingAnimation(text) {
@@ -1251,7 +1366,18 @@
         
         function saveSettings() {
             APP_STATE.apiKey = document.getElementById('apiKeyInput').value.trim();
-            APP_STATE.model = document.getElementById('modelSelect').value;
+            
+            // Save model based on selection type
+            if (APP_STATE.useCustomModel) {
+                APP_STATE.customModel = document.getElementById('customModelInput').value.trim();
+                if (!APP_STATE.customModel) {
+                    alert('Please enter a custom model name');
+                    return;
+                }
+            } else {
+                APP_STATE.model = document.getElementById('modelSelect').value;
+            }
+            
             APP_STATE.systemPrompt = document.getElementById('systemPromptInput').value.trim();
             APP_STATE.streaming = document.getElementById('streamingToggle').checked;
             APP_STATE.typingAnimation = document.getElementById('typingAnimToggle').checked;
@@ -1263,7 +1389,8 @@
         }
         
         function updateCurrentModel() {
-            const modelName = APP_STATE.model.split('/').pop();
+            const activeModel = getActiveModel();
+            const modelName = activeModel.split('/').pop();
             document.getElementById('currentModel').textContent = modelName;
         }
         
@@ -1312,4 +1439,3 @@
 
 </body>
 </html>
-
